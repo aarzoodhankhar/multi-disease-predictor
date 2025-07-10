@@ -1,17 +1,18 @@
+import streamlit as st
 import numpy as np
 import pickle
-import streamlit as st
-# 💡 Theme toggle before anything renders
-theme = st.sidebar.selectbox("🎨 Select Theme", ["Light", "Dark"])
+from fpdf import FPDF
+import datetime
 
+# ---- PAGE CONFIG & STYLING ----
+st.set_page_config(page_title="Multi Disease Predictor", layout="wide", page_icon="🩺")
+
+# Theme Toggle
+theme = st.sidebar.selectbox("🎨 Select Theme", ["Light", "Dark"])
 if theme == "Dark":
     st.markdown("""
         <style>
-        body {
-            background-color: #0e1117;
-            color: #FAFAFA;
-        }
-        .stApp {
+        body, .stApp {
             background-color: #0e1117;
             color: #FAFAFA;
         }
@@ -20,26 +21,48 @@ if theme == "Dark":
 else:
     st.markdown("""
         <style>
-        body {
-            background-color: #FFFFFF;
-            color: #000000;
+        body, .stApp {
+            background: linear-gradient(to right, #fce4ec, #f8bbd0);
+            color: black;
+            font-family: 'Segoe UI', sans-serif;
         }
-        .stApp {
-            background-color: #FFFFFF;
-            color: #000000;
+        h1, h2, h3 {
+            color: #ad1457;
+        }
+        .stButton>button {
+            background-color: #ec407a;
+            color: white;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: bold;
         }
         </style>
         """, unsafe_allow_html=True)
 
-from fpdf import FPDF
-import datetime
+# ---- SIDEBAR ----
+with st.sidebar:
+    st.title("🩺 Health Predictor")
+    st.markdown("""
+    A ML-powered assistant to predict:
 
-# Function to generate PDF report
+    - ❤️ Heart Disease  
+    - 💉 Diabetes  
+    - 🧠 Parkinson's  
+
+    _Developed by Aarzoo Dhankhar_
+    """)
+    st.markdown("[📬 Contact Me](https://www.linkedin.com/in/aarzoodhankhar)")
+
+# ---- Load Models ----
+diabetes_model = pickle.load(open('diabetes_model.pkl', 'rb'))
+heart_model = pickle.load(open('heart_model.pkl', 'rb'))
+parkinson_model = pickle.load(open('parkinson_model.pkl', 'rb'))
+
+# ---- PDF Generator ----
 def generate_pdf_report(disease, result, tips):
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size=12)
-
     pdf.cell(200, 10, txt="🩺 Multi Disease Prediction Report", ln=True, align='C')
     pdf.ln(10)
     pdf.cell(200, 10, txt=f"Date: {datetime.datetime.now().strftime('%d-%m-%Y')}", ln=True)
@@ -47,31 +70,21 @@ def generate_pdf_report(disease, result, tips):
     pdf.cell(200, 10, txt=f"Prediction: {disease} - {'Positive' if result == 1 else 'Negative'}", ln=True)
     pdf.ln(10)
     pdf.set_font("Arial", size=11)
-
     pdf.cell(200, 10, txt="Tips:", ln=True)
     for tip in tips:
         pdf.cell(200, 8, txt=f"- {tip}", ln=True)
-
     filename = f"{disease.replace(' ', '_')}_report.pdf"
     pdf.output(filename)
     return filename
 
-# Load the saved models
-diabetes_model = pickle.load(open('diabetes_model.pkl', 'rb'))
-heart_model = pickle.load(open('heart_model.pkl', 'rb'))
-parkinson_model = pickle.load(open('parkinson_model.pkl', 'rb'))
-
+# ---- BMI CALCULATOR ----
 st.markdown("---")
-st.header("\ud83d\udccf BMI Calculator")
-
+st.header("📏 BMI Calculator")
 weight = st.number_input("Enter your weight (kg)", min_value=1.0)
 height = st.number_input("Enter your height (cm)", min_value=1.0)
-
 if height > 0 and weight > 0:
-    height_m = height / 100
-    bmi = weight / (height_m ** 2)
+    bmi = weight / ((height / 100) ** 2)
     st.success(f"Your BMI is: **{bmi:.2f}**")
-
     if bmi < 18.5:
         st.warning("You are **Underweight** 😕. Try to eat well and gain healthy weight.")
     elif 18.5 <= bmi < 24.9:
@@ -81,14 +94,14 @@ if height > 0 and weight > 0:
     else:
         st.error("You are in **Obese** category 🚨. Please consult a doctor.")
 
+# ---- DISEASE SELECTION ----
 st.title('🩺 Multi Disease Prediction System')
 st.subheader("A Smart Health Assistant Powered by Machine Learning")
-
 selected = st.selectbox("Choose Disease to Predict", ["Heart Disease", "Diabetes", "Parkinson's"])
 
+# ---- HEART DISEASE ----
 if selected == "Heart Disease":
     st.header("❤️ Heart Disease Prediction")
-
     age = st.number_input("Age")
     sex = st.number_input("Sex (1 = Male, 0 = Female)")
     cp = st.number_input("Chest Pain Type (0–3)")
@@ -108,20 +121,19 @@ if selected == "Heart Disease":
                                 thalach, exang, oldpeak, slope, ca, thal]).reshape(1, -1)
         result = heart_model.predict(heart_input)
         st.success("🦡 Positive for Heart Disease" if result[0] == 1 else "💚 No Heart Disease Detected")
-
         tips = [
             "Follow a heart-healthy diet (low fat, low salt)",
             "Do regular exercise (30 min/day)",
             "Avoid smoking and alcohol",
             "Manage stress and sleep well",
-            "Regular blood pressure & cholesterol checkups"
+            "Regular BP & cholesterol checkups"
         ]
         filename = generate_pdf_report("Heart Disease", result[0], tips)
         st.download_button("📄 Download Report", data=open(filename, "rb"), file_name=filename)
 
+# ---- DIABETES ----
 elif selected == "Diabetes":
     st.header("💉 Diabetes Prediction")
-
     Pregnancies = st.number_input("Number of Pregnancies")
     Glucose = st.number_input("Glucose Level")
     BloodPressure = st.number_input("Blood Pressure")
@@ -136,20 +148,19 @@ elif selected == "Diabetes":
                                    Insulin, BMI, DiabetesPedigreeFunction, Age]).reshape(1, -1)
         result = diabetes_model.predict(diabetes_input)
         st.success("🔴 Diabetic" if result[0] == 1 else "🟢 Not Diabetic")
-
         tips = [
             "Eat high-fiber low-carb food",
             "Track blood sugar levels",
             "Exercise regularly",
-            "Avoid sugary and processed food",
+            "Avoid sugary/processed food",
             "Drink more water"
         ]
         filename = generate_pdf_report("Diabetes", result[0], tips)
         st.download_button("📄 Download Report", data=open(filename, "rb"), file_name=filename)
 
+# ---- PARKINSON'S ----
 elif selected == "Parkinson's":
     st.header("🧠 Parkinson's Disease Prediction")
-
     fo = st.number_input("MDVP:Fo(Hz)")
     fhi = st.number_input("MDVP:Fhi(Hz)")
     flo = st.number_input("MDVP:Flo(Hz)")
@@ -179,13 +190,12 @@ elif selected == "Parkinson's":
                                     rpde, dfa, spread1, spread2, d2, ppe]).reshape(1, -1)
         result = parkinson_model.predict(parkinson_input)
         st.success("⚠️ Parkinson's Detected" if result[0] == 1 else "✅ No Parkinson's")
-
         tips = [
             "Exercise regularly and stay active",
             "Take medications on time",
             "Practice speech and balance training",
             "Get adequate sleep",
-            "Consult your neurologist regularly"
+            "Consult neurologist regularly"
         ]
         filename = generate_pdf_report("Parkinson's", result[0], tips)
         st.download_button("📄 Download Report", data=open(filename, "rb"), file_name=filename)
