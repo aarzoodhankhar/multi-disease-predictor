@@ -57,7 +57,20 @@ if selected == "Heart Disease":
         heart_input = np.array([age, sex, cp, trestbps, chol, fbs, restecg,
                                 thalach, exang, oldpeak, slope, ca, thal]).reshape(1, -1)
         result = heart_model.predict(heart_input)
-        st.success("🧡 Positive for Heart Disease" if result[0] == 1 else "💚 No Heart Disease Detected")
+        if result[0] == 1:
+    st.error("🧡 Positive for Heart Disease")
+    with st.expander("💡 Preventive Tips"):
+        st.write("✔ Follow a heart-healthy diet (low fat, low salt)")
+        st.write("✔ Do regular exercise (30 min/day)")
+        st.write("✔ Avoid smoking and alcohol")
+        st.write("✔ Manage stress and sleep well")
+        st.write("✔ Regular blood pressure & cholesterol checkups")
+else:
+    st.success("💚 No Heart Disease Detected")
+    with st.expander("✅ Wellness Tips"):
+        st.write("✔ Keep your healthy routine")
+        st.write("✔ Go for annual heart checkups")
+
 
 # ------------------------------------------
 # 💉 DIABETES
@@ -77,7 +90,21 @@ elif selected == "Diabetes":
         diabetes_input = np.array([Pregnancies, Glucose, BloodPressure, SkinThickness,
                                    Insulin, BMI, DiabetesPedigreeFunction, Age]).reshape(1, -1)
         result = diabetes_model.predict(diabetes_input)
-        st.success("🔴 Diabetic" if result[0] == 1 else "🟢 Not Diabetic")
+       if result[0] == 1:
+    st.error("🔴 You may have Diabetes")
+    with st.expander("💡 Preventive Tips"):
+        st.write("✔ Maintain a healthy weight")
+        st.write("✔ Eat a low-sugar, high-fiber diet")
+        st.write("✔ Do regular physical activity")
+        st.write("✔ Monitor blood sugar frequently")
+        st.write("✔ Take medications as prescribed")
+else:
+    st.success("🟢 Not Diabetic")
+    with st.expander("✅ Wellness Tips"):
+        st.write("✔ Keep eating healthy")
+        st.write("✔ Avoid sugary drinks")
+        st.write("✔ Get periodic health screenings")
+
 
 # ------------------------------------------
 # 🧠 PARKINSON'S
@@ -112,5 +139,19 @@ elif selected == "Parkinson's":
                                     shimmer, shimmer_db, apq3, apq5, apq, dda, nhr, hnr,
                                     rpde, dfa, spread1, spread2, d2, ppe]).reshape(1, -1)
         result = parkinson_model.predict(parkinson_input)
-        st.success("⚠️ Parkinson's Detected" if result[0] == 1 else "✅ No Parkinson's")
+        if result[0] == 1:
+    st.error("⚠️ Parkinson's Detected")
+    with st.expander("💡 Helpful Tips"):
+        st.write("✔ Consult a neurologist for treatment options")
+        st.write("✔ Join support groups or therapy")
+        st.write("✔ Maintain physical activity (e.g. yoga)")
+        st.write("✔ Take medicines regularly")
+        st.write("✔ Do speech or occupational therapy if needed")
+else:
+    st.success("✅ No Parkinson's Detected")
+    with st.expander("✅ Keep it up!"):
+        st.write("✔ Stay active")
+        st.write("✔ Regular neurological checkups")
+        st.write("✔ Eat a balanced, antioxidant-rich diet")
+
 
