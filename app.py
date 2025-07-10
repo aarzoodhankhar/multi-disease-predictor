@@ -3,9 +3,9 @@ import pickle
 import streamlit as st
 
 # Load the saved models
-diabetes_model = pickle.load(open('diabetes_model.sav', 'rb'))
-heart_model = pickle.load(open('heart_model.sav', 'rb'))
-parkinson_model = pickle.load(open('parkinson_model.sav', 'rb'))
+diabetes_model = pickle.load(open('diabetes_model.pkl', 'rb'))
+heart_model = pickle.load(open('heart_model.pkl', 'rb'))
+parkinson_model = pickle.load(open('parkinson_model.pkl', 'rb'))
 st.markdown("---")
 st.header("📏 BMI Calculator")
 
