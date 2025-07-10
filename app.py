@@ -1,23 +1,47 @@
 import numpy as np
 import pickle
 import streamlit as st
+from fpdf import FPDF
+import datetime
+
+# Function to generate PDF report
+def generate_pdf_report(disease, result, tips):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    pdf.cell(200, 10, txt="🩺 Multi Disease Prediction Report", ln=True, align='C')
+    pdf.ln(10)
+    pdf.cell(200, 10, txt=f"Date: {datetime.datetime.now().strftime('%d-%m-%Y')}", ln=True)
+    pdf.ln(5)
+    pdf.cell(200, 10, txt=f"Prediction: {disease} - {'Positive' if result == 1 else 'Negative'}", ln=True)
+    pdf.ln(10)
+    pdf.set_font("Arial", size=11)
+
+    pdf.cell(200, 10, txt="Tips:", ln=True)
+    for tip in tips:
+        pdf.cell(200, 8, txt=f"- {tip}", ln=True)
+
+    filename = f"{disease.replace(' ', '_')}_report.pdf"
+    pdf.output(filename)
+    return filename
 
 # Load the saved models
 diabetes_model = pickle.load(open('diabetes_model.pkl', 'rb'))
 heart_model = pickle.load(open('heart_model.pkl', 'rb'))
 parkinson_model = pickle.load(open('parkinson_model.pkl', 'rb'))
+
 st.markdown("---")
-st.header("📏 BMI Calculator")
+st.header("\ud83d\udccf BMI Calculator")
 
 weight = st.number_input("Enter your weight (kg)", min_value=1.0)
 height = st.number_input("Enter your height (cm)", min_value=1.0)
 
 if height > 0 and weight > 0:
-    height_m = height / 100  # convert cm to meters
+    height_m = height / 100
     bmi = weight / (height_m ** 2)
     st.success(f"Your BMI is: **{bmi:.2f}**")
 
-    # Interpret BMI
     if bmi < 18.5:
         st.warning("You are **Underweight** 😕. Try to eat well and gain healthy weight.")
     elif 18.5 <= bmi < 24.9:
@@ -27,15 +51,11 @@ if height > 0 and weight > 0:
     else:
         st.error("You are in **Obese** category 🚨. Please consult a doctor.")
 
-# Title
 st.title('🩺 Multi Disease Prediction System')
 st.subheader("A Smart Health Assistant Powered by Machine Learning")
 
-# Tabs
 selected = st.selectbox("Choose Disease to Predict", ["Heart Disease", "Diabetes", "Parkinson's"])
 
-# ------------------------------------------
-# ❤️ HEART DISEASE
 if selected == "Heart Disease":
     st.header("❤️ Heart Disease Prediction")
 
@@ -57,23 +77,18 @@ if selected == "Heart Disease":
         heart_input = np.array([age, sex, cp, trestbps, chol, fbs, restecg,
                                 thalach, exang, oldpeak, slope, ca, thal]).reshape(1, -1)
         result = heart_model.predict(heart_input)
-        if result[0] == 1:
-    st.error("🧡 Positive for Heart Disease")
-    with st.expander("💡 Preventive Tips"):
-        st.write("✔ Follow a heart-healthy diet (low fat, low salt)")
-        st.write("✔ Do regular exercise (30 min/day)")
-        st.write("✔ Avoid smoking and alcohol")
-        st.write("✔ Manage stress and sleep well")
-        st.write("✔ Regular blood pressure & cholesterol checkups")
-else:
-    st.success("💚 No Heart Disease Detected")
-    with st.expander("✅ Wellness Tips"):
-        st.write("✔ Keep your healthy routine")
-        st.write("✔ Go for annual heart checkups")
+        st.success("🦡 Positive for Heart Disease" if result[0] == 1 else "💚 No Heart Disease Detected")
 
+        tips = [
+            "Follow a heart-healthy diet (low fat, low salt)",
+            "Do regular exercise (30 min/day)",
+            "Avoid smoking and alcohol",
+            "Manage stress and sleep well",
+            "Regular blood pressure & cholesterol checkups"
+        ]
+        filename = generate_pdf_report("Heart Disease", result[0], tips)
+        st.download_button("📄 Download Report", data=open(filename, "rb"), file_name=filename)
 
-# ------------------------------------------
-# 💉 DIABETES
 elif selected == "Diabetes":
     st.header("💉 Diabetes Prediction")
 
@@ -90,24 +105,18 @@ elif selected == "Diabetes":
         diabetes_input = np.array([Pregnancies, Glucose, BloodPressure, SkinThickness,
                                    Insulin, BMI, DiabetesPedigreeFunction, Age]).reshape(1, -1)
         result = diabetes_model.predict(diabetes_input)
-       if result[0] == 1:
-    st.error("🔴 You may have Diabetes")
-    with st.expander("💡 Preventive Tips"):
-        st.write("✔ Maintain a healthy weight")
-        st.write("✔ Eat a low-sugar, high-fiber diet")
-        st.write("✔ Do regular physical activity")
-        st.write("✔ Monitor blood sugar frequently")
-        st.write("✔ Take medications as prescribed")
-else:
-    st.success("🟢 Not Diabetic")
-    with st.expander("✅ Wellness Tips"):
-        st.write("✔ Keep eating healthy")
-        st.write("✔ Avoid sugary drinks")
-        st.write("✔ Get periodic health screenings")
+        st.success("🔴 Diabetic" if result[0] == 1 else "🟢 Not Diabetic")
 
+        tips = [
+            "Eat high-fiber low-carb food",
+            "Track blood sugar levels",
+            "Exercise regularly",
+            "Avoid sugary and processed food",
+            "Drink more water"
+        ]
+        filename = generate_pdf_report("Diabetes", result[0], tips)
+        st.download_button("📄 Download Report", data=open(filename, "rb"), file_name=filename)
 
-# ------------------------------------------
-# 🧠 PARKINSON'S
 elif selected == "Parkinson's":
     st.header("🧠 Parkinson's Disease Prediction")
 
@@ -139,19 +148,14 @@ elif selected == "Parkinson's":
                                     shimmer, shimmer_db, apq3, apq5, apq, dda, nhr, hnr,
                                     rpde, dfa, spread1, spread2, d2, ppe]).reshape(1, -1)
         result = parkinson_model.predict(parkinson_input)
-        if result[0] == 1:
-    st.error("⚠️ Parkinson's Detected")
-    with st.expander("💡 Helpful Tips"):
-        st.write("✔ Consult a neurologist for treatment options")
-        st.write("✔ Join support groups or therapy")
-        st.write("✔ Maintain physical activity (e.g. yoga)")
-        st.write("✔ Take medicines regularly")
-        st.write("✔ Do speech or occupational therapy if needed")
-else:
-    st.success("✅ No Parkinson's Detected")
-    with st.expander("✅ Keep it up!"):
-        st.write("✔ Stay active")
-        st.write("✔ Regular neurological checkups")
-        st.write("✔ Eat a balanced, antioxidant-rich diet")
+        st.success("⚠️ Parkinson's Detected" if result[0] == 1 else "✅ No Parkinson's")
 
-
+        tips = [
+            "Exercise regularly and stay active",
+            "Take medications on time",
+            "Practice speech and balance training",
+            "Get adequate sleep",
+            "Consult your neurologist regularly"
+        ]
+        filename = generate_pdf_report("Parkinson's", result[0], tips)
+        st.download_button("📄 Download Report", data=open(filename, "rb"), file_name=filename)
