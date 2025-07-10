@@ -1,6 +1,36 @@
 import numpy as np
 import pickle
 import streamlit as st
+# 💡 Theme toggle before anything renders
+theme = st.sidebar.selectbox("🎨 Select Theme", ["Light", "Dark"])
+
+if theme == "Dark":
+    st.markdown("""
+        <style>
+        body {
+            background-color: #0e1117;
+            color: #FAFAFA;
+        }
+        .stApp {
+            background-color: #0e1117;
+            color: #FAFAFA;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+        <style>
+        body {
+            background-color: #FFFFFF;
+            color: #000000;
+        }
+        .stApp {
+            background-color: #FFFFFF;
+            color: #000000;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
 from fpdf import FPDF
 import datetime
 
