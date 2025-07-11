@@ -1,6 +1,7 @@
 streamlit
 pyrebase
-gcloud
 firebase-admin
+gcloud
 numpy
 fpdf
+pycryptodome
