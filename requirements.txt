@@ -5,3 +5,4 @@ gcloud
 numpy
 fpdf
 pycryptodome
+setuptools
