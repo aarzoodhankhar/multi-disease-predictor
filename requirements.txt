@@ -1,7 +1,6 @@
 streamlit
-scikit-learn
-matplotlib
-pandas
+pyrebase
+gcloud
+firebase-admin
 numpy
 fpdf
-pyrebase4
