@@ -63,9 +63,9 @@ if st.session_state.user:
         """, unsafe_allow_html=True)
 
     # --- Load ML Models ---
-    diabetes_model = pickle.load(open('models/diabetes_model.pkl', 'rb'))
-    heart_model = pickle.load(open('models/heart_model.pkl', 'rb'))
-    parkinson_model = pickle.load(open('models/parkinson_model.pkl', 'rb'))
+    diabetes_model = pickle.load(open('diabetes_model.pkl', 'rb'))
+    heart_model = pickle.load(open('heart_model.pkl', 'rb'))
+    parkinson_model = pickle.load(open('parkinson_model.pkl', 'rb'))
 
     # --- PDF Report ---
     def generate_pdf_report(disease, result, tips):
