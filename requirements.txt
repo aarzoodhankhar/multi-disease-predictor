@@ -1,5 +1,6 @@
 streamlit
 pyrebase4
+scikit-learn
 firebase-admin
 gcloud
 numpy
