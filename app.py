@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import pickle
+import os
 from fpdf import FPDF
 import datetime
 from firebase_config import auth, db  # Make sure firebase_config.py has `auth` and `db`
@@ -63,9 +64,12 @@ if st.session_state.user:
         """, unsafe_allow_html=True)
 
     # --- Load ML Models ---
-    diabetes_model = pickle.load(open('diabetes_model.pkl', 'rb'))
-    heart_model = pickle.load(open('heart_model.pkl', 'rb'))
-    parkinson_model = pickle.load(open('parkinson_model.pkl', 'rb'))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+diabetes_model = pickle.load(open(os.path.join(BASE_DIR, 'diabetes_model.pkl'), 'rb'))
+heart_model = pickle.load(open(os.path.join(BASE_DIR, 'heart_model.pkl'), 'rb'))
+parkinson_model = pickle.load(open(os.path.join(BASE_DIR, 'parkinson_model.pkl'), 'rb'))
+
 
     # --- PDF Report ---
     def generate_pdf_report(disease, result, tips):
