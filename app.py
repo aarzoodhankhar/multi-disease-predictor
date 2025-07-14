@@ -218,15 +218,21 @@ if st.session_state.user:
         # --- History ---
         st.markdown("---")
         st.header("📚 Your Prediction History")
-        user_id = st.session_state.user['localId']
-        history = db.child("predictions").child(user_id).get()
-        if history.each():
-            for record in reversed(history.each()):
-                item = record.val()
-                st.markdown(f"""
-                **🕒 Date:** {item['date']}  
-                **🦠 Disease:** {item['disease']}  
-                **🧪 Result:** {"🟥 Positive" if item['result'] == 1 else "🟩 Negative"}
-                ---""")
+        user_id = st.session_state.user.get('localId', None)
+        id_token = st.session_state.user.get('idToken', None)
+
+        if user_id and id_token:
+            history = db.child("predictions").child(user_id).get(id_token)
+            if history.each():
+                for record in reversed(history.each()):
+                    item = record.val()
+                    st.markdown(f"""
+                    **🕒 Date:** {item['date']}  
+                    **🦠 Disease:** {item['disease']}  
+                    **🧪 Result:** {"🟥 Positive" if item['result'] == 1 else "🟩 Negative"}
+                    ---""")
+            else:
+                st.info("No predictions found yet.")
         else:
-            st.info("No predictions found yet.")
+            st.error("Authentication token missing. Please login again.")
+
