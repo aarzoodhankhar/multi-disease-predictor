@@ -10,7 +10,7 @@ st.markdown("<h1 style='text-align: center; color: #ad1457;'>🩺 Multi Disease 
 st.markdown("<p style='text-align: center; font-size: 18px;'>A Smart Health Assistant Powered by Machine Learning</p>", unsafe_allow_html=True)
 
 # Optional: Add a health banner image
-st.image("assets/health-banner.png", use_column_width=True)
+st.image("https://images.unsplash.com/photo-1588776814546-ec7ff979fabc", use_container_width=True)
 
 st.markdown("---")
 
