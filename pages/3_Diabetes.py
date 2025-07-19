@@ -71,5 +71,5 @@ if submitted:
         "Get regular blood sugar tests",
         "Avoid stress & get proper sleep"
     ]
-    filename = generate_pdf_report("Diabetes", result[0], tips)
-    st.download_button("📄 Download Your Report", data=open(filename, "rb"), file_name=filename)
+    # filename = generate_pdf_report("Diabetes", result[0], tips)
+    # st.download_button("📄 Download Your Report", data=open(filename, "rb"), file_name=filename)

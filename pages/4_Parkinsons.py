@@ -74,5 +74,5 @@ if submitted:
         "Take medications consistently",
         "Follow up with your neurologist"
     ]
-    filename = generate_pdf_report("Parkinson's", result[0], tips)
-    st.download_button("📄 Download Your Report", data=open(filename, "rb"), file_name=filename)
+    # filename = generate_pdf_report("Parkinson's", result[0], tips)
+    # st.download_button("📄 Download Your Report", data=open(filename, "rb"), file_name=filename)
