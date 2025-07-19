@@ -16,8 +16,7 @@ st.markdown("""
 col1, col2 = st.columns(2)
 
 with col1:
-    st.image("https://cdn.pixabay.com/photo/2017/02/01/11/50/heart-2026154_1280.png", use_column_width=True)
-
+    pass
 with col2:
     st.markdown("""
         <h3 style='color:#9c27b0;'>Features:</h3>
