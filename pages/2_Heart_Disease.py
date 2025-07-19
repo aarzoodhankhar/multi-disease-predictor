@@ -4,7 +4,7 @@ import pickle
 import os
 import datetime
 from components.sidebar import show_sidebar
-from components.pdf_generator import generate_pdf_report
+# from components.pdf_generator import generate_pdf_report
 from firebase_config import db
 
 # --- Setup ---
