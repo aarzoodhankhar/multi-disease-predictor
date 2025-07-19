@@ -76,5 +76,5 @@ if submitted:
         "Sleep well & reduce stress",
         "Get periodic heart check-ups"
     ]
-    filename = generate_pdf_report("Heart Disease", result[0], tips)
+    # filename = generate_pdf_report("Heart Disease", result[0], tips)
     st.download_button("📄 Download Your Report", data=open(filename, "rb"), file_name=filename)
